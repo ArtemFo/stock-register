@@ -46,7 +46,8 @@ public class StockService {
     public void update(Stock stock) {
         Assert.notNull(stock, "Stock must not be null");
         log.info("Update {}", stock.toString());
-        getById(stock.getId());
+        Stock oldStock = getById(stock.getId());
+        stock.setCode(oldStock.getCode());
         stockRepository.save(stock);
     }
 

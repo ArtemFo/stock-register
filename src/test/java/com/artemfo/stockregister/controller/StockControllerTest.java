@@ -123,7 +123,7 @@ class StockControllerTest {
     @Test
     void updateById() throws Exception {
         doNothing().when(service).update(ST_1_SAME_CODE_ID_1);
-        this.mockMvc.perform(put("/{id}", 1)
+        this.mockMvc.perform(put("/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JSON_ST_1_SAME_CODE_ID_1))
                 .andDo(print())
@@ -133,7 +133,7 @@ class StockControllerTest {
     @Test
     void updateById_null() throws Exception {
         doNothing().when(service).update(null);
-        this.mockMvc.perform(put("/{id}", 1)
+        this.mockMvc.perform(put("/")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isBadRequest());

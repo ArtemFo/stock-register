@@ -41,14 +41,14 @@ public class StockController {
         return stockService.create(stock);
     }
 
+    @PutMapping()
+    void updateById(@Valid @RequestBody Stock stock) {
+        stockService.update(stock);
+    }
+
     @GetMapping("/{id}")
     Stock getById(@PathVariable Long id) {
         return stockService.getById(id);
-    }
-
-    @PutMapping("/{id}")
-    void updateById(@Valid @RequestBody Stock stock) {
-        stockService.update(stock);
     }
 
     @DeleteMapping("/{id}")
