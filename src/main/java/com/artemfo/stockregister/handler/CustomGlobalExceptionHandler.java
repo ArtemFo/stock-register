@@ -29,7 +29,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         List<String> errors = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
-                .map(e -> "Field '" + e.getField() + "' " + e.getDefaultMessage())
+                .map(e -> "'" + e.getField() + "' " + e.getDefaultMessage())
                 .collect(Collectors.toList());
         body.put("errors", errors);
 

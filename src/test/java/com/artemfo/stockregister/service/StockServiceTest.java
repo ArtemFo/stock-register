@@ -59,13 +59,13 @@ class StockServiceTest {
     @Test
     void update() {
         service.create(ST_1);
-        service.update(ST_1_SAME_CODE_ID_1);
+        service.update(ST_1_SAME_CODE_ID_1, 1L);
         assertThat(service.getById(1L)).isEqualToIgnoringGivenFields(ST_1_SAME_CODE, "id", "totalFaceValue");
     }
 
     @Test
     void update_null() {
-        assertThrows(IllegalArgumentException.class, () -> service.update(null));
+        assertThrows(IllegalArgumentException.class, () -> service.update(null, 1L));
     }
 
     @Test

@@ -43,22 +43,23 @@ public class StockService {
                 .orElseThrow(() -> new StockNotFoundException(id));
     }
 
-    public void update(Stock stock) {
-        Assert.notNull(stock, "Stock must not be null");
-        log.info("Update {}", stock.toString());
-        Stock oldStock = getById(stock.getId());
-        stock.setCode(oldStock.getCode());
-        stockRepository.save(stock);
+    public Stock update(Stock newStock, Long id) {
+        Assert.notNull(newStock, "Stock must not be null");
+        log.info("Update {}", newStock.toString());
+        Stock oldStock = getById(id);
+        newStock.setId(oldStock.getId());
+        newStock.setCode(oldStock.getCode());
+        return stockRepository.save(newStock);
     }
 
-    public void delete(Long id) {
+    public Stock delete(Long id) {
         Stock stock = stockRepository.findById(id)
                 .orElseThrow(() -> new StockNotFoundException(id));
-        if (stock.getStatus().equals(StockStatus.DELETED)) {
+        if (stock.getStatus() != null && stock.getStatus().equals(StockStatus.DELETED)) {
             throw new StockAlreadyDeletedException(id);
         }
         stock.setStatus(StockStatus.DELETED);
-        stockRepository.save(stock);
+        return stockRepository.save(stock);
     }
 
     public Page<Stock> findAll(StockStatus status, String code, int pageNum, int pageSize) {

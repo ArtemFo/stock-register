@@ -3,6 +3,7 @@ package com.artemfo.stockregister.controller;
 import com.artemfo.stockregister.entity.Stock;
 import com.artemfo.stockregister.entity.StockStatus;
 import com.artemfo.stockregister.service.StockService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -12,8 +13,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
+@Slf4j
 @RestController
-@RequestMapping("/")
+@RequestMapping("/stock")
 public class StockController {
 
     private final StockService stockService;
@@ -27,6 +29,10 @@ public class StockController {
                                         @RequestParam(name = "code", required = false) String code,
                                         @RequestParam(name = "pageNum", defaultValue = "1") int pageNum,
                                         @RequestParam(name = "pageSize", defaultValue = "10") int pageSize) {
+        String s = status == null ? "" : status.toString();
+        String c = code == null ? "000" : code;
+        log.info("Ststus = {}, code = {}", s, c);
+
         Page<Stock> page = stockService.findAll(status, code, pageNum, pageSize);
         HttpHeaders headers = new HttpHeaders();
         headers.add("currentPage", (page.getNumber() + 1) + "");
@@ -41,9 +47,9 @@ public class StockController {
         return stockService.create(stock);
     }
 
-    @PutMapping()
-    void updateById(@Valid @RequestBody Stock stock) {
-        stockService.update(stock);
+    @PutMapping("/{id}")
+    Stock updateById(@Valid @RequestBody Stock stock, @PathVariable Long id) {
+        return stockService.update(stock, id);
     }
 
     @GetMapping("/{id}")
@@ -52,7 +58,7 @@ public class StockController {
     }
 
     @DeleteMapping("/{id}")
-    void deleteById(@PathVariable Long id) {
-        stockService.delete(id);
+    Stock deleteById(@PathVariable Long id) {
+        return stockService.delete(id);
     }
 }
