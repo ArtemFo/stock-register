@@ -44,7 +44,7 @@ class StockControllerTest {
     @Test
     void findAll() throws Exception {
         when(service.findAll(null, null, 1, 10)).thenReturn(PAGE_OF_3);
-        MvcResult result = this.mockMvc.perform(get("/?pageNum={p}&pageSize={s}", 1, 10)
+        MvcResult result = this.mockMvc.perform(get(URL_TEMPL + "/?pageNum={p}&pageSize={s}", 1, 10)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -66,7 +66,7 @@ class StockControllerTest {
     @Test
     void createStock() throws Exception {
         when(service.create(ST_1)).thenReturn(ST_1);
-        this.mockMvc.perform(post("/")
+        this.mockMvc.perform(post(URL_TEMPL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JSON_ST_1))
                 .andDo(print())
@@ -75,7 +75,7 @@ class StockControllerTest {
 
     @Test
     void createStock_noRequestBody() throws Exception {
-        this.mockMvc.perform(post("/")
+        this.mockMvc.perform(post(URL_TEMPL)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
@@ -85,7 +85,7 @@ class StockControllerTest {
     void createStock_alreadyExists() throws Exception {
         ST_1.setId(0);
         doThrow(new StockAlreadyExistsException(ST_1)).when(service).create(ST_1);
-        MvcResult result = this.mockMvc.perform(post("/")
+        MvcResult result = this.mockMvc.perform(post(URL_TEMPL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JSON_ST_1))
                 .andDo(print())
@@ -97,7 +97,7 @@ class StockControllerTest {
     @Test
     void getById() throws Exception {
         when(service.getById(1L)).thenReturn(ST_1);
-        MvcResult result = this.mockMvc.perform(get("/{id}", 1)
+        MvcResult result = this.mockMvc.perform(get(URL_TEMPL + "/{id}", 1)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -113,7 +113,7 @@ class StockControllerTest {
     @Test
     void getById_notExists() throws Exception {
         when(service.getById(0L)).thenThrow(new StockNotFoundException(0L));
-        MvcResult result = this.mockMvc.perform(get("/0"))
+        MvcResult result = this.mockMvc.perform(get(URL_TEMPL + "/{id}", 0))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andReturn();
@@ -122,36 +122,40 @@ class StockControllerTest {
 
     @Test
     void updateById() throws Exception {
-        doNothing().when(service).update(ST_1_SAME_CODE_ID_1, 1L);
-        this.mockMvc.perform(put("/{id}", 1L)
+        when(service.update(ST_1_SAME_CODE_ID_1, 1L)).thenReturn(ST_1_SAME_CODE_ID_1);
+        MvcResult result = this.mockMvc.perform(put(URL_TEMPL + "/{id}", 1)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JSON_ST_1_SAME_CODE_ID_1))
                 .andDo(print())
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andReturn();
+        assertThat(result.getResponse().getContentAsString()).isEqualTo(JSON_ST_1_SAME_CODE_ID_1);
     }
 
     @Test
     void updateById_null() throws Exception {
-        doNothing().when(service).update(null, 1L);
-        this.mockMvc.perform(put("/{id}", 1L)
-                .contentType(MediaType.APPLICATION_JSON))
+        this.mockMvc.perform(put(URL_TEMPL + "/{id}", 1)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{}"))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void deleteById() throws Exception {
-        doNothing().when(service).delete(1L);
-        this.mockMvc.perform(delete("/{id}", 1)
+        when(service.delete(1L)).thenReturn(ST_1_SAME_CODE_ID_1_DELETED);
+        MvcResult result = this.mockMvc.perform(delete(URL_TEMPL + "/{id}", 1)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andReturn();
+        assertThat(result.getResponse().getContentAsString()).isEqualTo(JSON_ST_1_SAME_CODE_ID_1_DELETED);
     }
 
     @Test
     void deleteById_alreadyDeleted() throws Exception {
         doThrow(new StockAlreadyDeletedException(1L)).when(service).delete(1L);
-        MvcResult result = this.mockMvc.perform(delete("/{id}", 1)
+        MvcResult result = this.mockMvc.perform(delete(URL_TEMPL + "/{id}", 1)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
