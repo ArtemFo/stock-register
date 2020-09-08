@@ -74,11 +74,11 @@ Vue.component('search-form', {
             }
             stockApi.get(searchParams)
                 .then(result => {
-                    result.json().then(data =>
-                        data.forEach(stock => this.stocks.push(stock)));
-                    this.pagesParams.current = result.headers.get('currentpage');
-                    this.pagesParams.total = result.headers.get('totalpages');
-                },
+                        result.json().then(data =>
+                            data.forEach(stock => this.stocks.push(stock)));
+                        this.pagesParams.current = result.headers.get('currentpage');
+                        this.pagesParams.total = result.headers.get('totalpages');
+                    },
                     result => result.body.errors.forEach(error => this.errors.push(error))
                 );
         }
@@ -147,7 +147,8 @@ Vue.component('stock-form', {
                 amount: this.amount,
                 faceValue: this.faceValue,
                 date: this.date,
-                comment: this.comment
+                comment: this.comment,
+                status: this.status
             };
 
             if (this.id) {
@@ -257,9 +258,12 @@ Vue.component('stocks-list', {
         ' </div></div></div>' +
         '</div>',
     created: function () {
-        stockApi.get().then(result =>
+        stockApi.get().then(result => {
                 result.json().then(data =>
-                    data.forEach(stock => this.stocks.push(stock))),
+                    data.forEach(stock => this.stocks.push(stock)));
+                this.pagesParams.current = result.headers.get('currentpage');
+                this.pagesParams.total = result.headers.get('totalpages');
+            },
             result => result.body.errors.forEach(error => this.errors.push(error))
         )
     },
