@@ -29,10 +29,6 @@ public class StockController {
                                         @RequestParam(name = "code", required = false) String code,
                                         @RequestParam(name = "pageNum", defaultValue = "1") int pageNum,
                                         @RequestParam(name = "pageSize", defaultValue = "10") int pageSize) {
-        String s = status == null ? "" : status.toString();
-        String c = code == null ? "000" : code;
-        log.info("Ststus = {}, code = {}", s, c);
-
         Page<Stock> page = stockService.findAll(status, code, pageNum, pageSize);
         HttpHeaders headers = new HttpHeaders();
         headers.add("currentPage", (page.getNumber() + 1) + "");

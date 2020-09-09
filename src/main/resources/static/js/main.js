@@ -24,7 +24,7 @@ Vue.component('search-form', {
         '<h4>Пошук</h4>' +
         '<div class="form-group mb-2">' +
         '<label for="search-code">ЄДРПОУ</label>' +
-        '<input id="search-code" class="form-control" type="number" minlength="8" maxlength="8" ' +
+        '<input id="search-code" class="form-control" type="number" min="0" max="99999999" ' +
         'placeholder="ЄДРПОУ" name="code" v-model="code" />' +
         '</div>' +
         '<h5>Статус</h5>' +
@@ -114,23 +114,23 @@ Vue.component('stock-form', {
         '<h4>Додати/редагувати</h4>' +
         '<div class="form-group mb-2">' +
         '   <label for="add-code">ЄДРПОУ</label>' +
-        '   <input id="add-code" class="form-control" type="number" minlength="8" maxlength="8" ' +
-        '       placeholder="ЄДРПОУ" v-model="code" />' +
+        '   <input id="add-code" class="form-control" type="number" min="0" max="99999999" ' +
+        '       required placeholder="ЄДРПОУ" v-model="code" />' +
         '</div>' +
         '<div class="form-group mb-2">' +
         '   <label for="add-amount">Кількість</label>' +
         '   <input id="add-amount" class="form-control" type="number" min="0" ' +
-        '       placeholder="Кількість" v-model="amount" />' +
+        '       required placeholder="Кількість" v-model="amount" />' +
         '</div>' +
         '<div class="form-group mb-2">' +
         '   <label for="add-faceValue">Номінальна вартість</label>' +
         '   <input id="add-faceValue" class="form-control" type="number" min="0" ' +
-        '       placeholder="Номінальна вартість" v-model="faceValue" />' +
+        '       required placeholder="Номінальна вартість" v-model="faceValue" />' +
         '</div>' +
         '<div class="form-group mb-2">' +
         '   <label for="add-date">Дата випуску</label>' +
         '   <input id="add-date" class="form-control" type="date" ' +
-        '       placeholder="Дата випуску" v-model="date" />' +
+        '       required placeholder="Дата випуску" v-model="date" />' +
         '</div>' +
         '<div class="form-group mb-2">' +
         '   <label for="add-comment">Коментар</label>' +
@@ -147,11 +147,11 @@ Vue.component('stock-form', {
                 amount: this.amount,
                 faceValue: this.faceValue,
                 date: this.date,
-                comment: this.comment,
-                status: this.status
+                comment: this.comment
             };
 
             if (this.id) {
+                stock.status = this.status;
                 stockApi.update({id: this.id}, stock).then(result =>
                         result.json().then(data => {
                             var index = getIndex(this.stocks, data.id);
